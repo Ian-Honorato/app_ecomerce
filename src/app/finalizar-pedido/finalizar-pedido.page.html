@@ -1,0 +1,41 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>finalizarPedido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+    <div>
+      <h1>Lista de compras</h1>
+      <div class="container-table">
+         
+            <table>
+              <thead>
+                <th>#</th>
+                <th>Produto</th>
+                <th>Qtd</th>
+                <th>v.Total</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let itensPedido of pedidoFechado"><!-- aqui fazer o *ngfor mais to com preguiça -->
+                  <td class="indexProduto">{{itensPedido.idProduto}}</td>
+                  <td>{{itensPedido.nomeProduto}}</td>
+                  <td>{{itensPedido.quantidade}}</td>
+                  
+                  <td>{{itensPedido.valorTotal}}</td>
+                </tr>
+              </tbody>
+            </table>
+           <div class="btn-container">
+
+             <ion-button color="success" shape="round" (click)="finalizarPedido(pedidoFechado)" >Finalizar Pedido</ion-button>
+             <ion-button color="danger" shape="round" (click)="cancelarPedido()">Cancelar</ion-button>
+             
+           </div>
+          </div>
+          
+          
+      </div>
+
+</ion-content>

@@ -1,0 +1,175 @@
+<!-- Menu lateral utilizando ion-menu -->
+<ion-menu contentId="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">Conteúdo do menu</ion-content>
+</ion-menu>
+
+<!-- Página principal -->
+<div class="ion-page" id="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Menu</ion-title>
+
+<!-- Ícone de carrinho de compras -->
+      <ion-buttons slot="end">
+        <ion-icon size="large" fill="clear" name="cart" (click)="cartClick()"></ion-icon>
+      </ion-buttons>  
+      
+ <!-- Exibe o nome do usuário logado e botão de logout -->    
+   <div *ngIf="usuario_logado !== ''" slot="end">
+        <span class="container-usuario-logado">
+          <ion-button size="small" color="danger" (click)="destroySession()">
+            <ion-icon slot="icon-only" name="exit"></ion-icon>
+          </ion-button>
+        </span>
+      </div>
+
+      <!-- MODAL para login ou criar conta -->
+      <ion-modal [isOpen]="isModalOpen">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+               <!-- Título do modal -->
+              <ion-title *ngIf="usuario_logado !== ''">Lista de compras, {{usuario_logado}}</ion-title>
+              <ion-title *ngIf="usuario_logado === ''">Login / Criar Conta</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="setOpen(false)">Fechar</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+
+             <!-- Formulário de login ou criar conta -->
+            <div *ngIf="usuario_logado === ''">
+              <div class="option">
+                <!-- Segmento para alternar entre login e criar conta -->
+                <ion-segment [(ngModel)]="selectedSegment">
+                  <ion-segment-button value="custom">
+                    <ion-label>Login</ion-label>
+                  </ion-segment-button>
+                  <ion-segment-button value="segment">
+                    <ion-label>Criar conta</ion-label>
+                  </ion-segment-button>
+                </ion-segment>
+              </div>
+              
+              <!-- Formulário de Criar Conta -->
+              <div class="inputLogin" *ngIf="selectedSegment === 'segment'">
+                <h1>Criar conta</h1>
+                <form>
+                  <ion-input [(ngModel)]="nome" name="nome" label="Nome" label-placement="floating" fill="outline" placeholder="Nome"></ion-input>
+                  <ion-input [(ngModel)]="celular" name="celular" label="Celular" label-placement="floating" fill="outline" placeholder="Celular"></ion-input>
+                  <ion-input [(ngModel)]="senha" name="senha" label="Senha" label-placement="floating" fill="outline" placeholder="Senha" type="password"></ion-input>
+                  <ion-button expand="full" (click)="cadastrar()">Enviar</ion-button>
+                </form>
+              </div>
+
+              <!-- Formulário de Login -->
+              <div class="inputLogin" *ngIf="selectedSegment === 'custom'">
+                <h1>Login</h1>
+                <form>
+                  <ion-input [(ngModel)]="celular_cadastrado" label="Celular" name="celular_cadastrado" label-placement="floating" fill="outline" placeholder="Celular"></ion-input>
+                  <ion-input [(ngModel)]="senha_cadastrado" name="senha_cadastrado" label="Senha" label-placement="floating" fill="outline" placeholder="Senha" type="password"></ion-input>
+                  <ion-button expand="full" (click)="logar()">Enviar</ion-button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Conteúdo da lista de compras -->
+            <div *ngIf="usuario_logado.length>0">
+              <h1>Lista de compras</h1>
+              <div *ngIf="cartProduct.length > 0">
+                 
+                    <table>
+                      <thead>
+                        <th>#</th>
+                        <th>Produto</th>
+                        <th>Qtd</th>
+                        <th>v.Total</th>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let produtos of cartProduct; let i = index">
+                          <td class="indexProduto">{{i +1}}</td>
+                          <td>{{produtos.nomeProduto}}</td>
+                          <td> <ion-button size="small" (click)="diminuirQuantidade(i)">-</ion-button>
+                            {{produtos.quantidade}}
+                            <ion-button size="small" (click)="aumentarQuantidade(i)">+</ion-button></td>
+                          
+                          <td>{{produtos.valorTotal}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <ion-list>
+                      <ion-button expand="full" (click)="finalizarCompra(cartProduct)">Finalizar Compra</ion-button>
+                    </ion-list>
+                  </div>
+                  <div *ngIf="cartProduct.length == 0">
+                      <p>Ainda não temos Produstos na lista </p>
+                  </div>
+              </div>
+            
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+      <!-- FIM MODAL -->
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <!-- Swiper de imagens -->
+    <swiper-container pagination="true" [loop]="true" (slideChange)="swiperSlideChanged($event)">
+      <swiper-slide *ngFor="let image of images">
+        <div class="swiper-zoom-container">
+          <img [src]="image">
+        </div>
+      </swiper-slide>
+    </swiper-container>
+
+    <div id="container">
+      <strong class="capitalize">{{folder}}</strong>
+    </div>
+
+    <!-- Promoções -->
+    <ion-item-divider>
+      <ion-label>
+        <ion-title>Promoção do dia</ion-title>
+      </ion-label>
+    </ion-item-divider>
+    
+<!-- Exibição da lista de compras quando o usuário está logado -->
+
+    <ion-grid>
+      <ion-row>
+        <ion-col size="auto" *ngFor="let product of products">
+          
+          <ion-card class="card-home">
+            
+            <div class="img-card">
+              <img alt="{{product.title}}" [src]="product.image" />
+            </div>
+            
+            <ion-card-header>
+              <ion-card-title>{{product.title}}</ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content>
+              
+              <p>R${{product.price}}.</p>
+
+              <ion-button expand="full" (click)="adicionarProduct(product)">Adicionar</ion-button>
+
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+</div>
